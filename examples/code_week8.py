@@ -1,6 +1,6 @@
 import finalproject
 
-file_name = "Location1.py"
+file_name = "Location1.csv"
 df, basic_stats = finalproject.load_observations_data(file_name)
 
 
