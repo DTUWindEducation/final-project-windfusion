@@ -2,7 +2,19 @@
 requires = ["setuptools"] 
 build-backend = "setuptools.build_meta" 
  
+# Information on the package
 [project] 
 name = "finalproject" 
+description = Team WindFusion Final Project Wind Power Forecasting
 version = "0.1.0" 
-dependencies = [] 
+authors = [
+    { name = "T. Labeikis", email = "s243092@student.dtu.dk" }
+]
+dependencies = [
+    "matplotlib",
+    "numpy"
+]
+
+[project.urls]
+Repository = "https://github.com/DTUWindEducation/final-project-windfusion.git"
+
