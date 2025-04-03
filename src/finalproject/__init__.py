@@ -6,7 +6,7 @@ def load_observations_data(file_name):
     """
     Load and parse observations dataset for one of the sites from a CSV file in the 'inputs' folder.
     """
-    file_path = os.path.join("inputs", file_name)
+    file_path = os.path.join("..", "inputs", file_name)
 
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Error: The file '{file_path}' was not found.")
@@ -67,7 +67,7 @@ def plot_timeseries(variable_name, site_index, starting_time, ending_time):
         raise ValueError("site_index must be 1, 2, 3, or 4")
     
     # Format the data path to point to the 'inputs' folder
-    data_path = os.path.join("inputs", f"Location{site_index}.csv")
+    data_path = os.path.join("..", "inputs", f"Location{site_index}.csv")
     
     # Load the data
     try:
@@ -119,5 +119,7 @@ def plot_timeseries(variable_name, site_index, starting_time, ending_time):
     
     # Adjust layout
     plt.tight_layout()
+
+    plt.show()
     
     return fig, ax
