@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 # Information on the package
 [project] 
 name = "finalproject" 
-description = Team WindFusion Final Project Wind Power Forecasting
+description = "Team WindFusion Final Project Wind Power Forecasting"
 version = "0.1.0" 
 authors = [
     { name = "T. Labeikis", email = "s243092@student.dtu.dk" }
