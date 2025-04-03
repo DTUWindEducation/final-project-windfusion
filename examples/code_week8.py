@@ -1,7 +1,4 @@
 import finalproject
-import matplotlib.pyplot as plt
-import pandas as pd
-import os
 
 file_name = "Location1.py"
 df, basic_stats = finalproject.load_observations_data(file_name)
