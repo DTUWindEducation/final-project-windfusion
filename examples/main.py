@@ -42,8 +42,8 @@ mae_persistence, mse_persistence, rmse_persistence = persistence_model.evaluate(
 print(f"Persistence model MAE: {mae_persistence:.4f}, MSE: {mse_persistence:.4f}, RMSE: {rmse_persistence:.4f}")
 
 
-# # Plot time series for a specific variable and time period
-# variable_name = 'windspeed_100m'
-# starting_time = '2017-05-01 00:00:00'
-# ending_time = '2017-05-01 23:59:59'
-# fig, ax = plot_timeseries(variable_name, site_index, starting_time, ending_time)
+# Plot time series for a specific variable and time period
+variable_name = 'windspeed_100m'
+starting_time = '2017-05-01 00:00:00'
+ending_time = '2017-05-01 23:59:59'
+fig, ax = plot_timeseries(variable_name, site_index, starting_time, ending_time)

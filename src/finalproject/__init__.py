@@ -67,7 +67,10 @@ def plot_timeseries(variable_name, site_index, starting_time, ending_time):
         raise ValueError("site_index must be 1, 2, 3, or 4")
     
     # Format the data path to point to the 'inputs' folder
-    data_path = os.path.join("..", "inputs", f"Location{site_index}.csv")
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    inputs_folder = os.path.join(project_root, 'inputs')
+    data_path = os.path.join(inputs_folder, f"Location{site_index}.csv")
+
     
     # Load the data
     try:
