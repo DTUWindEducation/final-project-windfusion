@@ -2,39 +2,15 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-def load_observations_data(file_name):
+def load_observations_data(file_path):
     """
-    Load and parse observations dataset for one of the sites from a CSV file in the 'inputs' folder.
+    Load and parse observations dataset from a full file path.
     """
-    file_path = os.path.join("..", "inputs", file_name)
-
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Error: The file '{file_path}' was not found.")
 
-    # Load the CSV file into a pandas DataFrame
-    df = pd.read_csv(file_path, engine='python')  
-
-    # Display basic information about the dataset
-    print(f"Dataset loaded successfully from {file_path}")
-    print(f"Number of rows: {df.shape[0]}")
-    print(f"Number of columns: {df.shape[1]}")
-    print("\nColumn names:")
-    for col in df.columns:
-        print(f"- {col}")
-
-    # Check for missing values
-    missing_values = df.isnull().sum()
-    if missing_values.sum() > 0:
-        print("\nMissing values detected:")
-        print(missing_values[missing_values > 0])
-    else:
-        print("\nNo missing values detected in the dataset.")
-
-    # Display basic statistics
+    df = pd.read_csv(file_path, engine='python')
     basic_stats = df.describe(include='all').round(2)
-    print("\nBasic statistics:")
-    print(basic_stats)
-
     return df, basic_stats
 
 
