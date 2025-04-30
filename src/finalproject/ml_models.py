@@ -1,10 +1,9 @@
-
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-from xgboost import XGBRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.neural_network import MLPRegressor
 
 class SVRModel:
     def __init__(self, train_df, target_col='Power'):
@@ -24,20 +23,14 @@ class SVRModel:
         X_test = test_df[self.features]
         X_test_scaled = self.scaler.transform(X_test)
         return self.model.predict(X_test_scaled)
-    
-    
 
-class XGBModel:
-    def __init__(self, train_df, target_col='Power', n_estimators=100, max_depth=5, learning_rate=0.1):
+
+class GradientBoostingModel:
+    def __init__(self, train_df, target_col='Power', n_estimators=100, learning_rate=0.1, max_depth=3):
         self.target_col = target_col
         self.train_df = train_df
         self.features = [col for col in train_df.columns if col not in ['Time', self.target_col]]
-        self.model = XGBRegressor(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            learning_rate=learning_rate,
-            objective='reg:squarederror'
-        )
+        self.model = GradientBoostingRegressor(n_estimators=n_estimators, learning_rate=learning_rate, max_depth=max_depth)
         self.scaler = StandardScaler()
 
     def train(self):
@@ -50,51 +43,57 @@ class XGBModel:
         X_test = test_df[self.features]
         X_test_scaled = self.scaler.transform(X_test)
         return self.model.predict(X_test_scaled)
-  
-    
-   
-class LSTMModel:
-    def __init__(self, train_df, target_col='Power', time_steps=24, units=50, epochs=50, batch_size=32):
+
+
+class LagLinearModel:
+    """
+    A simple linear regression model using lagged values of the target as features.
+    Serves as a proxy for long-term forecasting using past values.
+    """
+    def __init__(self, train_df, target_col='Power', lags=24):
         self.target_col = target_col
-        self.train_df = train_df
-        self.time_steps = time_steps
-        self.units = units
-        self.epochs = epochs
-        self.batch_size = batch_size
-
-        self.features = [col for col in train_df.columns if col not in ['Time', self.target_col]]
+        self.lags = lags
+        self.model = LinearRegression()
         self.scaler = StandardScaler()
-        self.model = None
+        self.train_df = self._prepare_lagged_data(train_df)
 
-    def _create_sequences(self, df):
-        X, y = [], []
-        for i in range(self.time_steps, len(df)):
-            X.append(df[i - self.time_steps:i, :])
-            y.append(self.y_data[i])
-        return np.array(X), np.array(y)
+    def _prepare_lagged_data(self, df):
+        df = df.copy()
+        for lag in range(1, self.lags + 1):
+            df[f'lag_{lag}'] = df[self.target_col].shift(lag)
+        df.dropna(inplace=True)
+        return df
 
     def train(self):
-        X_raw = self.train_df[self.features].values
-        self.y_data = self.train_df[self.target_col].values
-
-        X_scaled = self.scaler.fit_transform(X_raw)
-        X_seq, y_seq = self._create_sequences(X_scaled)
-
-        self.model = Sequential()
-        self.model.add(LSTM(self.units, input_shape=(X_seq.shape[1], X_seq.shape[2])))
-        self.model.add(Dense(1))
-        self.model.compile(optimizer='adam', loss='mse')
-
-        self.model.fit(X_seq, y_seq, epochs=self.epochs, batch_size=self.batch_size, verbose=0)
+        X = self.train_df[[f'lag_{i}' for i in range(1, self.lags + 1)]]
+        y = self.train_df[self.target_col]
+        X_scaled = self.scaler.fit_transform(X)
+        self.model.fit(X_scaled, y)
 
     def predict(self, test_df):
-        X_raw = test_df[self.features].values
-        X_scaled = self.scaler.transform(X_raw)
+        test_df = self._prepare_lagged_data(test_df)
+        X_test = test_df[[f'lag_{i}' for i in range(1, self.lags + 1)]]
+        X_test_scaled = self.scaler.transform(X_test)
+        return self.model.predict(X_test_scaled)
+    
+    
+    
+    
+class FeedforwardNNModel:
+    def __init__(self, train_df, target_col='Power', hidden_layer_sizes=(100, 50), max_iter=500):
+        self.target_col = target_col
+        self.train_df = train_df
+        self.features = [col for col in train_df.columns if col not in ['Time', self.target_col]]
+        self.model = MLPRegressor(hidden_layer_sizes=hidden_layer_sizes, max_iter=max_iter)
+        self.scaler = StandardScaler()
 
-        # Create sequences from test data
-        X_seq = []
-        for i in range(self.time_steps, len(X_scaled)):
-            X_seq.append(X_scaled[i - self.time_steps:i])
-        X_seq = np.array(X_seq)
+    def train(self):
+        X = self.train_df[self.features]
+        y = self.train_df[self.target_col]
+        X_scaled = self.scaler.fit_transform(X)
+        self.model.fit(X_scaled, y)
 
-        return self.model.predict(X_seq).flatten()
+    def predict(self, test_df):
+        X_test = test_df[self.features]
+        X_test_scaled = self.scaler.transform(X_test)
+        return self.model.predict(X_test_scaled)
