@@ -1,15 +1,19 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
-import os
-import finalproject 
+import sys, os
 
-DATA_DIR = Path(os.path.join('..', 'inputs'))
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+import finalproject 
 
 def test_load_observations_data():
     """Test if data loads correctly and is parsed"""
-    file_name = DATA_DIR / 'Location1.csv'  # Ensure this file exists in 'inputs' folder
-    df, basic_stats = finalproject.load_observations_data(file_name)  # Using WindFusion to load data
+    here = os.path.abspath(os.path.dirname(__file__))  # this test file's folder
+    project_root = os.path.abspath(os.path.join(here, '..'))  # go up to project root
+    file_path = os.path.join(project_root, 'inputs', 'Location1.csv')  # portable path
+
+    df, basic_stats = finalproject.load_observations_data(file_path)
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
     assert 'Time' in df.columns

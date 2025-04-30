@@ -1,3 +1,4 @@
+
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
@@ -97,4 +98,3 @@ class LSTMModel:
         X_seq = np.array(X_seq)
 
         return self.model.predict(X_seq).flatten()
-

@@ -15,7 +15,7 @@ from finalproject.plotting_predicted_vs_real import plot_power_predictions
 
 # Define Location (site index) and load the input data of this location
 site_index = 1
-ML_model = 'LSTM'  # can also be 'XGB', or 'LSTM'
+ML_model = 'SVR'  # can also be 'XGB', or 'LSTM'
 file_path = get_input_file_path(site_index)
 df = pd.read_csv(file_path)
 
