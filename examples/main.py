@@ -74,8 +74,23 @@ print(f"Persistence model MAE: {mae_persistence:.4f}, MSE: {mse_persistence:.4f}
 time_window = ('2021-10-01 00:00:00', '2021-11-01 23:59:59')
 fig2, ax2 = plot_power_predictions(site_index, timestamps, predictions, actual_values, ML_model, time_window=time_window)
 
+# Save the predictions plot
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))  # Go up one level from examples/
+output_dir = os.path.join(project_root, 'outputs')
+os.makedirs(output_dir, exist_ok=True)
+plot_filename = f"{ML_model}_predictions_site_{site_index}.png"
+plot_path = os.path.join(output_dir, plot_filename)
+fig2.savefig(plot_path)
+print(f"Predictions plot saved to: {plot_path}")
+
 # Plot time series for a specific variable and time period
 variable_name = 'windspeed_100m'
 starting_time = '2017-05-01 00:00:00'
 ending_time = '2017-05-01 23:59:59'
 fig, ax = plot_timeseries(variable_name, site_index, starting_time, ending_time)
+
+# Save the time series plot
+timeseries_filename = f"timeseries_{variable_name}_site_{site_index}.png"
+timeseries_path = os.path.join(output_dir, timeseries_filename)
+fig.savefig(timeseries_path)
+print(f"Time series plot saved to: {timeseries_path}")
