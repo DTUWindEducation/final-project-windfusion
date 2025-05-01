@@ -12,6 +12,7 @@ from finalproject import train_test_split
 from finalproject import SVRModel, GradientBoostingModel, LagLinearModel, FeedforwardNNModel
 from finalproject import evaluate_model
 from finalproject import plot_power_predictions
+from finalproject import SiteSummary
 
 # Define Location (site index) and machine learning model 
 site_index = 2
@@ -24,6 +25,10 @@ time_window = ('2021-10-01 00:00:00', '2021-11-01 23:59:59')
 variable_name = 'windspeed_100m'
 starting_time = '2017-05-01 00:00:00'
 ending_time = '2017-05-01 23:59:59'
+
+# Create and print site summary
+site_summary = SiteSummary(site_index)
+summary_info = site_summary.summarize()
 
 # Load the input data of this location
 file_path = get_input_file_path(site_index)
