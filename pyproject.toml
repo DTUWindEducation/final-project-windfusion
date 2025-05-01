@@ -8,11 +8,15 @@ name = "finalproject"
 description = "Team WindFusion Final Project Wind Power Forecasting"
 version = "0.1.0" 
 authors = [
-    { name = "T. Labeikis", email = "s243092@student.dtu.dk" }
+    { name = "T. Labeikis", email = "s243092@student.dtu.dk" },
+    { name = "G. Georgiadis", email = "s243196@student.dtu.dk" },
+    { name = "A.K. Sfakianoudis", email = "s242856@student.dtu.dk" }
 ]
 dependencies = [
+    "pandas",
+    "numpy",
     "matplotlib",
-    "numpy"
+    "scikit-learn"
 ]
 
 [project.urls]
