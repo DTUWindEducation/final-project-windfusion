@@ -37,7 +37,7 @@ This package provides tools for analyzing wind farm data and developing machine 
 
 2. Install the required dependencies:
    ```bash
-   pip install external-package
+   pip install external-package-name
    ```
 
 3. Install the package:
@@ -77,18 +77,18 @@ final-project-windfusion/
 ┌───────────────────┐     ┌──────────────────┐     ┌───────────────────┐
 │                   │     │                  │     │                   │
 │   Data Loading    │────▶│  Data Processing │────▶│  Model Training   │
-│   & Preparation   │     │  & Engineering   │     │  & Evaluation     │
+│   & Preparation   │     │  & Engineering   │     │  & Prediction     │
 │                   │     │                  │     │                   │
-└───────────────────┘     └──────────────────┘     └─────────┬─────────┘
-                                                             │
+└───────────────────┘     └──────────────────┘     └──────────┬────────┘
+                                                              │
 ┌───────────────────┐                           ┌─────────────▼─────────┐
 │                   │                           │                       │
-│    Persistence    │◀──────────────────────────│    ML Model           │
-│    Benchmarking   │                           │    Prediction         │
+│ Persistence Model │◀──────────────────────────│    ML Model           │
+│    Benchmarking   │                           │    Evaluation         │
 │                   │                           │                       │
-└─────────┬─────────┘                           └─────────────┬─────────┘
-          │                                                   │
-          │           ┌───────────────────────────┐           │
+└─────────┬─────────┘                           └──────────────┬────────┘
+          │                                                    │
+          │           ┌───────────────────────────┐            │
           └──────────▶│                           │◀──────────┘
                       │     Visualization &       │
                       │     Performance           │
@@ -99,28 +99,28 @@ final-project-windfusion/
 
 ### Architecture Diagram (Development View)
 ```
-                    +-----------------------------+
-                    |      examples/main.py|
-                    +-------------+---------------+
-                                  |
-                                  v
-+-------------------------------------------------------------+
-|                          src/finalproject/__init__.py       |
-| Main controller module: imports and coordinates models,     |
-| utilities, feature engineering, evaluation, and plotting.   |
-+-------------------------------------------------------------+
-   |         |           |               |              |
-   |         |           |               |              |
-   v         v           v               v              v
-+--------+ +--------------------+ +----------------+ +------------------+ +-------------------+
-| utils  | | feature_engineering| |    model       | |   evaluation     | |     plotting      |
-|        | |                    | |                | |                  | |                   |
-+--------+ +--------------------+ +----------------+ +------------------+ +-------------------+
-   |           |                        |                   |                    |
-   |           |                        |                   |                    |
-   v           v                        v                   v                    v
-[Load CSVs] [Add datetime & lags]   [Train/test ML]     [MAE/MSE/RMSE]     [TS & pred plots]
-[Split data][Handle missing vals]  [Predict values]    [Persistence model] [Matplotlib-based]
+         +------------------------------------------------------------+
+         |                    examples/main.py                        |
+         | Main controller module: imports and coordinates models,    |
+         | utilities, feature engineering, evaluation, and plotting.  |
+         +------------------------------------------------------------+
+                                       |
+                                       v
+   +------------------------------------------------------------------------+
+   |                       src/finalproject/__init__.py                     |
+   +------------------------------------------------------------------------+
+      |              |                    |                |              |
+      |              |                    |                |              |
+      v              v                    v                v              v
++--------+ +----------------------+ +--------------+ +---------------+ +--------------+
+| utils  | | feature_engineering  | |    model     | |   evaluation  | |   plotting   |
+|        | |                      | |              | |               | |              |
++--------+ +----------------------+ +--------------+ +---------------+ +--------------+
+   |                 |                    |                 |                 |
+   |                 |                    |                 |                 |
+   v                 v                    v                 v                 v
+[Load CSVs]  [Add datetime & lags]   [Train/test ML]   [MAE/MSE/RMSE]     [Timeseries & prediction plots]
+[Split data] [Handle missing values] [Predict values] [Persistence model] [Matplotlib-based]
 ```
 
 ### Architecture Diagram (Process View)
@@ -131,68 +131,71 @@ final-project-windfusion/
            |
            v
 +-----------------------------+
-| get_input_file_path(site)  |
-|  → Load CSV data           |
+| get_input_file_path(site)   |
+|  → Load CSV data            |
 +-----------------------------+
            |
            v
 +-----------------------------+
-|  engineer_features(df)     |
-|  → Create lags, wind power |
+|  engineer_features(df)      |
+|  → Create lags, time-based  |
+|  features, wind directions  |
 +-----------------------------+
            |
            v
 +-----------------------------+
-| train_test_split(df)       |
-|  → 80/20 split by time     |
+| train_test_split(df)        |
+|  → 80/20 split by time      |
 +-----------------------------+
            |
            v
 +-----------------------------+
-|  Select ML Model           |
-|  e.g., SVRModel(train_df)  |
+|  Select ML Model            |
+|  e.g., SVRModel(train_df)   |
 +-----------------------------+
            |
            v
 +-----------------------------+
-|  model.train()             |
-|  → Fit on train_df         |
+|  model.train()              |
+|  → Fit on train_df          |
 +-----------------------------+
            |
            v
 +-----------------------------+
-|  model.predict(test_df)    |
-|  → Generate predictions    |
+|  model.predict(test_df)     |
+|  → Generate predictions     |
 +-----------------------------+
            |
            v
 +-----------------------------+
-|  evaluate_model()          |
-|  → MAE, MSE, RMSE          |
+|  evaluate_model()           |
+|  → MAE, MSE, RMSE           |
 +-----------------------------+
            |
            v
 +-----------------------------+
-|  plot_power_predictions()  |
-|  → Save to /outputs        |
+|  plot_power_predictions()   |
+|  → Save to /outputs         |
 +-----------------------------+
            |
            v
 +-----------------------------+
-|  plot_timeseries()         |
-|  → Save to /outputs        |
+|  plot_timeseries()          |
+|  (for certain variable      |
+|  and time window)           |
+|  → Save to /outputs         |
 +-----------------------------+
            |
            v
 +-----------------------------+
-| PersistenceModel(test_df)  |
-|  → Predict and evaluate    |
+| PersistenceModel(test_df)   |
+|  → Predict and evaluate     |
 +-----------------------------+
            |
            v
-+----------------------+
-|   End of Program     |
-+----------------------+
++--------------------------+
+|      End of Program      |
++--------------------------+
 ```
 
 ## Package Components
