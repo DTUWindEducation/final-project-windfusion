@@ -9,13 +9,13 @@ from finalproject.path_utils import get_input_file_path
 from finalproject.feature_engineer import engineer_features
 from finalproject import plot_timeseries
 from finalproject.split_data import train_test_split
-from finalproject.ml_models import SVRModel, XGBModel, LSTMModel
+from finalproject.ml_models import SVRModel, GradientBoostingModel, LagLinearModel, FeedforwardNNModel
 from finalproject.evaluation import evaluate_model
 from finalproject.plotting_predicted_vs_real import plot_power_predictions
 
 # Define Location (site index) and load the input data of this location
 site_index = 1
-ML_model = 'SVR'  # can also be 'XGB', or 'LSTM'
+ML_model = 'FeedforwardNN'  # ['SVR', 'GradientBoosting', 'LagLinear', 'FeedforwardNN']
 file_path = get_input_file_path(site_index)
 df = pd.read_csv(file_path)
 
@@ -36,30 +36,31 @@ if ML_model == 'SVR':
     model_name = "SVR"
     # Evaluate the model
     mae, mse, rmse = evaluate_model(predictions, test_df['Power'])
-elif ML_model == 'XGB':
-    model = XGBModel(train_df)
+elif ML_model == 'GradientBoosting':
+    model = GradientBoostingModel(train_df)
     model.train()
     predictions = model.predict(test_df)
-    model_name = "XGB"
+    model_name = "GradientBoosting"
     # Evaluate the model
     mae, mse, rmse = evaluate_model(predictions, test_df['Power'])
-elif ML_model == 'LSTM':
-    model = LSTMModel(train_df)
+elif ML_model == 'LagLinear':
+    model = LagLinearModel(train_df)
     model.train()
     predictions = model.predict(test_df)
-    model_name = "LSTM"
-    # For LSTM, adjust test data to match predictions length
-    actual_values = test_df['Power'].iloc[model.time_steps:].reset_index(drop=True)
-    timestamps = test_df["Time"].iloc[model.time_steps:].reset_index(drop=True)
-    # Ensure predictions and actual values have the same length
-    if len(predictions) < len(actual_values):
-        actual_values = actual_values[:len(predictions)]
-    elif len(actual_values) < len(predictions):
-        predictions = predictions[:len(actual_values)]
+    actual_values = test_df['Power'].iloc[model.lags:].reset_index(drop=True)  # skip first 24 rows to align
+    timestamps = test_df["Time"].iloc[model.lags:].reset_index(drop=True)
+    model_name = "LagLineaR"
     # Evaluate the model
     mae, mse, rmse = evaluate_model(predictions, actual_values)
+elif ML_model == 'FeedforwardNN':
+    model = FeedforwardNNModel(train_df)
+    model.train()
+    predictions = model.predict(test_df)
+    model_name = "FeedforwardNN"
+    # Evaluate the model
+    mae, mse, rmse = evaluate_model(predictions, test_df['Power'])
 else:
-    raise ValueError(f"Unknown ML model: {ML_model}. Choose from 'SVR', 'XGB', or 'LSTM'.")
+    raise ValueError(f"Unknown ML model: {ML_model}. Choose from 'SVR', 'GradientBoosting', 'LagLinear', or 'FeedforwardNN'.")
 
 print(f"{model_name} MAE: {mae:.4f}, MSE: {mse:.4f}, RMSE: {rmse:.4f}")
 
