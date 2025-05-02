@@ -4,24 +4,16 @@ import sys, os
 
 # Dynamically add src/ to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from finalproject import PersistenceModel
-from finalproject import get_input_file_path
-from finalproject import engineer_features
-from finalproject import plot_timeseries
-from finalproject import train_test_split
-from finalproject import SVRModel, GradientBoostingModel, LagLinearModel, FeedforwardNNModel
-from finalproject import evaluate_model
-from finalproject import plot_power_predictions
-from finalproject import SiteSummary
+from finalproject import *
 
 # Define Location (site index) and machine learning model 
-site_index = 2
-ML_model = 'SVR'  # ['SVR', 'GradientBoosting', 'LagLinear', 'FeedforwardNN']
+site_index = 1
+ML_model = 'RandomForest'  # ['SVR', 'GradientBoosting', 'RandomForest', 'FeedforwardNN']
 
-# Define time window for to plot predictions for 
+# Define time window for predictions vs true values plot
 time_window = ('2021-10-01 00:00:00', '2021-11-01 23:59:59')
 
-# Define a specific variable and time period to plot time series for
+# Define a specific variable and time period to plot time series
 variable_name = 'windspeed_100m'
 starting_time = '2017-05-01 00:00:00'
 ending_time = '2017-05-01 23:59:59'
@@ -34,7 +26,7 @@ summary_info = site_summary.summarize()
 file_path = get_input_file_path(site_index)
 df = pd.read_csv(file_path)
 
-# Engineer features
+# Engineer features (transform the data)
 df["Time"] = pd.to_datetime(df["Time"])
 df = engineer_features(df)
 
@@ -46,38 +38,21 @@ timestamps = test_df["Time"]
 # Run the selected ML model based on ML_model variable
 if ML_model == 'SVR':
     model = SVRModel(train_df)
-    model.train()
-    predictions = model.predict(test_df)
-    model_name = "SVR"
-    # Evaluate the model
-    mae, mse, rmse = evaluate_model(predictions, test_df['Power'])
 elif ML_model == 'GradientBoosting':
     model = GradientBoostingModel(train_df)
-    model.train()
-    predictions = model.predict(test_df)
-    model_name = "GradientBoosting"
-    # Evaluate the model
-    mae, mse, rmse = evaluate_model(predictions, test_df['Power'])
-elif ML_model == 'LagLinear':
-    model = LagLinearModel(train_df)
-    model.train()
-    predictions = model.predict(test_df)
-    actual_values = test_df['Power'].iloc[model.lags:].reset_index(drop=True)  # skip first 24 rows to align
-    timestamps = test_df["Time"].iloc[model.lags:].reset_index(drop=True)
-    model_name = "LagLineaR"
-    # Evaluate the model
-    mae, mse, rmse = evaluate_model(predictions, actual_values)
+elif ML_model == 'RandomForest':
+    model = RandomForestModel(train_df)
 elif ML_model == 'FeedforwardNN':
     model = FeedforwardNNModel(train_df)
-    model.train()
-    predictions = model.predict(test_df)
-    model_name = "FeedforwardNN"
-    # Evaluate the model
-    mae, mse, rmse = evaluate_model(predictions, test_df['Power'])
 else:
     raise ValueError(f"Unknown ML model: {ML_model}. Choose from 'SVR', 'GradientBoosting', 'LagLinear', or 'FeedforwardNN'.")
 
-print(f"{model_name} MAE: {mae:.4f}, MSE: {mse:.4f}, RMSE: {rmse:.4f}")
+# Train the model and make predictions
+model.train()
+predictions = model.predict(test_df)
+# Evaluate the model
+mae, mse, rmse = evaluate_model(predictions, actual_values)
+print(f"{ML_model} MAE: {mae:.4f}, MSE: {mse:.4f}, RMSE: {rmse:.4f}")
 
 # Create a PersistenceModel instance and evaluate its performance
 persistence_model = PersistenceModel(test_df)
@@ -88,20 +63,10 @@ print(f"Persistence model MAE: {mae_persistence:.4f}, MSE: {mse_persistence:.4f}
 # Plot power predictions
 fig2, ax2 = plot_power_predictions(site_index, timestamps, predictions, actual_values, ML_model, time_window=time_window)
 
-# Save the predictions plot
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))  # Go up one level from examples/
-output_dir = os.path.join(project_root, 'outputs')
-os.makedirs(output_dir, exist_ok=True)
-plot_filename = f"{ML_model}_predictions_site_{site_index}.png"
-plot_path = os.path.join(output_dir, plot_filename)
-fig2.savefig(plot_path)
-print(f"Predictions plot saved to the folder 'outputs'")
+# Save prediction plot
+save_figure(fig2, f"{ML_model}_predictions_site_{site_index}.png")
 
-# Plot time series for a specific variable and time period
+# Plot and save time series
 fig, ax = plot_timeseries(variable_name, site_index, starting_time, ending_time)
+save_figure(fig, f"timeseries_{variable_name}_site_{site_index}.png")
 
-# Save the time series plot
-timeseries_filename = f"timeseries_{variable_name}_site_{site_index}.png"
-timeseries_path = os.path.join(output_dir, timeseries_filename)
-fig.savefig(timeseries_path)
-print(f"Time series plot saved to the folder 'outputs'")
