@@ -10,7 +10,7 @@ from finalproject import train_test_split
 def sample_df():
     """Create a sample dataframe with 10 hourly timestamps."""
     return pd.DataFrame({
-        "Time": pd.date_range(start="2022-01-01", periods=10, freq="H"),
+        "Time": pd.date_range(start="2022-01-01", periods=10, freq="h"),
         "Power": range(10)
     })
 
