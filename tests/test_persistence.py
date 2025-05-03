@@ -9,7 +9,7 @@ from finalproject import PersistenceModel
 @pytest.fixture
 def sample_df():
     return pd.DataFrame({
-        "Time": pd.date_range(start="2022-01-01", periods=10, freq="H"),
+        "Time": pd.date_range(start="2022-01-01", periods=10, freq="h"),
         "Power": np.linspace(0.1, 1.0, 10)
     })
 
