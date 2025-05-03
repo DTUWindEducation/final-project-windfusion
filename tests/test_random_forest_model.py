@@ -14,7 +14,7 @@ def test_random_forest_model_initialization():
     X, y = make_regression(n_samples=100, n_features=5, noise=0.1, random_state=42)
     df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
     df['Power'] = y
-    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='H')
+    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='h')
     
     # Test default initialization
     model = RandomForestModel(df)
@@ -37,7 +37,7 @@ def test_random_forest_model_training_and_prediction():
     X, y = make_regression(n_samples=100, n_features=5, noise=0.1, random_state=42)
     df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
     df['Power'] = y
-    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='H')
+    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='h')
     
     # Split data
     train_df, test_df = train_test_split(df, test_size=0.2)
@@ -63,7 +63,7 @@ def test_random_forest_model_error_handling():
     X, y = make_regression(n_samples=100, n_features=5, noise=0.1, random_state=42)
     df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
     df['Power'] = y
-    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='H')
+    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='h')
     
     train_df, test_df = train_test_split(df, test_size=0.2)
     model = RandomForestModel(train_df)
@@ -92,7 +92,7 @@ def test_random_forest_feature_importance():
     y = X[:, 0] * 10 + np.random.normal(0, 0.1, 100)  # First feature is important
     df = pd.DataFrame(X, columns=['feature1', 'feature2', 'feature3'])
     df['Power'] = y
-    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='H')
+    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='h')
     
     model = RandomForestModel(df)
     model.train()
@@ -109,7 +109,7 @@ def test_random_forest_reproducibility():
     X, y = make_regression(n_samples=100, n_features=5, noise=0.1, random_state=42)
     df = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(X.shape[1])])
     df['Power'] = y
-    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='H')
+    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='h')
     
     train_df, test_df = train_test_split(df, test_size=0.2)
     
@@ -131,7 +131,7 @@ def test_random_forest_with_single_feature():
     df = pd.DataFrame({
         'feature1': np.random.rand(100),
         'Power': np.random.rand(100),
-        'Time': pd.date_range(start='2023-01-01', periods=100, freq='H')
+        'Time': pd.date_range(start='2023-01-01', periods=100, freq='h')
     })
     
     model = RandomForestModel(df)
