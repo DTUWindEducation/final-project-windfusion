@@ -17,10 +17,14 @@ This package provides tools for analyzing wind farm data and developing machine 
 
 ## Dependencies
 
-- pandas
-- numpy
-- matplotlib
-- scikit-learn
+  - python=3.12        
+  - numpy
+  - pandas
+  - matplotlib
+  - scikit-learn
+  - pylint
+  - pytest
+  - pytest-cov
 
 ## Installation Instructions
 
@@ -35,14 +39,11 @@ This package provides tools for analyzing wind farm data and developing machine 
    cd final-project-windfusion
    ```
 
-2. Install the required dependencies:
+2. Install the required dependencies and package:
    ```bash
-   pip install external-package-name
+   conda env create -f environment.yaml
+   conda activate windfusion
    ```
-
-3. Install the package:
-   ```bash
-   pip install -e .
    ```
 
 ## Package Architecture
@@ -68,6 +69,7 @@ final-project-windfusion/
 ├── pyproject.toml
 ├── LICENSE
 ├── Collaboration.md
+├── environment.yaml
 └── README.md
 ```
 
