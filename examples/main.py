@@ -70,3 +70,10 @@ save_figure(fig2, f"{ML_model}_predictions_site_{site_index}.png")
 fig, ax = plot_timeseries(variable_name, site_index, starting_time, ending_time)
 save_figure(fig, f"timeseries_{variable_name}_site_{site_index}.png")
 
+if hasattr(model.model, "feature_importances_"):
+    fig_feat, ax_feat = plot_feature_importance(model.model, model.features)
+    save_figure(fig_feat, f"{ML_model}_feature_importance_site_{site_index}.png")
+
+
+
+evaluate_model_without_power_lag1(df, ML_model, site_index)
