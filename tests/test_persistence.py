@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from finalproject.persistence_model import PersistenceModel
+from finalproject import PersistenceModel
 
 @pytest.fixture
 def sample_df():
