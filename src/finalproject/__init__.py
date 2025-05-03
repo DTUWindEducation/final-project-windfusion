@@ -110,6 +110,43 @@ def engineer_features(df):
     return df
 
 
+
+def plot_feature_importance(model, feature_names, top_n=10, print_values=True):
+    """
+    Plot the top_n most important features of a trained tree-based model.
+
+    Parameters:
+    model: Trained model with feature_importances_ (e.g., RandomForestRegressor)
+    feature_names: List of feature names used in training
+    top_n: Number of top features to display (default is 10)
+    print_values: Whether to print the top feature importances (default is True)
+    """
+    if not hasattr(model, "feature_importances_"):
+        raise ValueError("Model does not have feature_importances_ attribute.")
+
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1][:top_n]
+    top_features = [feature_names[i] for i in indices]
+    top_importances = importances[indices]
+
+    if print_values:
+        print("\nTop Feature Importances:")
+        for feature, importance in zip(top_features, top_importances):
+            print(f"{feature}: {importance:.4f}")
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.barh(range(len(top_features)), top_importances[::-1], align='center')
+    ax.set_yticks(range(len(top_features)))
+    ax.set_yticklabels(top_features[::-1])
+    ax.set_xlabel('Feature Importance')
+    ax.set_title('Top Feature Importances')
+    plt.tight_layout()
+    plt.show()
+
+    return fig, ax
+
+
+
 class SVRModel:
     """Support Vector Regression model wrapper."""
     def __init__(self, train_df, target_col='Power'):
@@ -363,6 +400,58 @@ def train_test_split(df, test_size):
     train_df = df.iloc[:split_index]
     test_df = df.iloc[split_index:]
     return train_df, test_df
+
+
+def evaluate_model_without_power_lag1(df, model_type, site_index, save_plots=True):
+    """
+    Trains and evaluates a model without the Power_lag1 feature.
+
+    Parameters:
+    df (pd.DataFrame): DataFrame with engineered features.
+    model_type (str): One of 'SVR', 'GradientBoosting', 'RandomForest', 'FeedforwardNN'.
+    site_index (int): Index of the wind site (used for labeling/saving).
+    save_plots (bool): If True, saves the feature importance plot if available.
+
+    Returns:
+    tuple: (mae, mse, rmse)
+    """
+    if 'Power_lag1' not in df.columns:
+        raise ValueError("Power_lag1 not found in dataframe. Did you engineer features?")
+
+    # Drop Power_lag1 and split data
+    df_no_lag1 = df.drop(columns=['Power_lag1'])
+    train_df, test_df = train_test_split(df_no_lag1, test_size=0.2)
+
+    actual_values = test_df['Power']
+    timestamps = test_df['Time']
+
+    # Select and train model
+    if model_type == 'SVR':
+        model = SVRModel(train_df)
+    elif model_type == 'GradientBoosting':
+        model = GradientBoostingModel(train_df)
+    elif model_type == 'RandomForest':
+        model = RandomForestModel(train_df)
+    elif model_type == 'FeedforwardNN':
+        model = FeedforwardNNModel(train_df)
+    else:
+        raise ValueError(f"Unknown model_type: {model_type}")
+
+    model.train()
+    predictions = model.predict(test_df)
+
+    # Evaluate
+    mae, mse, rmse = evaluate_model(predictions, actual_values)
+    print(f"\n[NO Power_lag1] {model_type} MAE: {mae:.4f}, MSE: {mse:.4f}, RMSE: {rmse:.4f}")
+
+    # Plot feature importance if applicable
+    if hasattr(model.model, "feature_importances_"):
+        fig, ax = plot_feature_importance(model.model, model.features)
+        if save_plots:
+            save_figure(fig, f"{model_type}_feature_importance_NO_LAG1_site_{site_index}.png")
+
+    return mae, mse, rmse
+
 
 
 class GeneralWindTurbine:
