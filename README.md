@@ -44,7 +44,6 @@ This package provides tools for analyzing wind farm data and developing machine 
    conda env create -f environment.yaml
    conda activate windfusion
    ```
-   ```
 
 ## Package Architecture
 
