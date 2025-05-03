@@ -4,7 +4,7 @@ import pytest
 
 # Allow imports from src
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from finalproject.split_data import train_test_split
+from finalproject import train_test_split
 
 @pytest.fixture
 def sample_df():
