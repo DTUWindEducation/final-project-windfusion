@@ -19,7 +19,7 @@ def test_svr_model():
     # Create DataFrame with Time column
     df = pd.DataFrame(X, columns=feature_cols)
     df[target_col] = y
-    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='H')
+    df['Time'] = pd.date_range(start='2023-01-01', periods=len(df), freq='h')
     
     # Split into train and test
     train_df, test_df = train_test_split(df, test_size=0.2)
