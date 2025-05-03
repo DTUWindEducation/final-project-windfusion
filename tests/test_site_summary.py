@@ -5,7 +5,7 @@ import pytest
 # Add src/ to the path so we can import the class
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
-from finalproject.site_summary import SiteSummary
+from finalproject import SiteSummary
 
 def test_create_site_summary():
     """

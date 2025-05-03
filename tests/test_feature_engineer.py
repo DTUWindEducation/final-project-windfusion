@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from finalproject.feature_engineer import engineer_features
+from finalproject import engineer_features
 
 def test_engineer_features():
     # Create a simple dummy dataframe
@@ -19,10 +19,10 @@ def test_engineer_features():
     # Apply feature engineering
     result = engineer_features(df)
 
-    # Check that new columns exist
-    expected_columns = ['hour', 'month', 'dayofweek', 'Power_lag1', 'Power_lag2', 'wind_dir_sin', 'wind_dir_cos']
+    # Check that new columns exist (updated to include Power_lag3)
+    expected_columns = ['hour', 'month', 'dayofweek', 'Power_lag1', 'Power_lag2', 'Power_lag3', 'wind_dir_sin', 'wind_dir_cos']
     for col in expected_columns:
         assert col in result.columns, f"{col} not created"
 
-    # Check that NaNs are dropped due to lag features
-    assert len(result) == len(df['Time']) - 2  # 5 original rows - 2 from lagging
+    # Updated assertion: 5 original rows - 3 lags = 2 remaining rows
+    assert len(result) == 2, f"Expected 2 rows after lag features, got {len(result)}"
