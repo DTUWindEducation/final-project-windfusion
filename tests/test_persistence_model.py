@@ -4,8 +4,8 @@ import os, sys
 import pandas as pd
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from finalproject.persistence_model import PersistenceModel
-from finalproject.evaluation import evaluate_model
+from finalproject import PersistenceModel
+from finalproject import evaluate_model
 
 def test_persistence_model_prediction_and_evaluation():
     # Create a dummy DataFrame
