@@ -1,6 +1,9 @@
 import pytest
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+import os, sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from finalproject import evaluate_model
 
 def test_evaluate_model():
