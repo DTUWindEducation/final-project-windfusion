@@ -129,11 +129,6 @@ def plot_feature_importance(model, feature_names, top_n=10, print_values=True):
     top_features = [feature_names[i] for i in indices]
     top_importances = importances[indices]
 
-    if print_values:
-        print("\nTop Feature Importances:")
-        for feature, importance in zip(top_features, top_importances):
-            print(f"{feature}: {importance:.4f}")
-
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.barh(range(len(top_features)), top_importances[::-1], align='center')
     ax.set_yticks(range(len(top_features)))
@@ -442,7 +437,7 @@ def evaluate_model_without_power_lag1(df, model_type, site_index, save_plots=Tru
 
     # Evaluate
     mae, mse, rmse = evaluate_model(predictions, actual_values)
-    print(f"\n[NO Power_lag1] {model_type} MAE: {mae:.4f}, MSE: {mse:.4f}, RMSE: {rmse:.4f}")
+    print(f"\n[No Power_lag1] {model_type} MAE: {mae:.4f}, MSE: {mse:.4f}, RMSE: {rmse:.4f}")
 
     # Plot feature importance if applicable
     if hasattr(model.model, "feature_importances_"):

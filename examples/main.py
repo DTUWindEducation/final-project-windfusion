@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import sys, os
 
-# Dynamically add src/ to sys.path
+# Add src/ to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from finalproject import *
 
@@ -73,7 +73,6 @@ save_figure(fig, f"timeseries_{variable_name}_site_{site_index}.png")
 if hasattr(model.model, "feature_importances_"):
     fig_feat, ax_feat = plot_feature_importance(model.model, model.features)
     save_figure(fig_feat, f"{ML_model}_feature_importance_site_{site_index}.png")
-
 
 
 evaluate_model_without_power_lag1(df, ML_model, site_index)
