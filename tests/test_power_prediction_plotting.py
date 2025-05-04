@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import os, sys
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from finalproject import plot_power_predictions
 
 class TestPlotPowerPredictions(unittest.TestCase):

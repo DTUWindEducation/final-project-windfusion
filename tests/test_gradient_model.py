@@ -4,7 +4,9 @@ import numpy as np
 from sklearn.datasets import make_regression
 from sklearn.metrics import mean_squared_error
 from sklearn.exceptions import NotFittedError
+import os, sys
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 # Assuming the GradientBoostingModel is imported from your module
 from finalproject import GradientBoostingModel, train_test_split
 
