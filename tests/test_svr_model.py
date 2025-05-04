@@ -4,7 +4,9 @@ import numpy as np
 from sklearn.datasets import make_regression
 from sklearn.metrics import mean_squared_error
 from sklearn.exceptions import NotFittedError
+import sys, os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 # Assuming the SVRModel class is imported from your module
 from finalproject import SVRModel, train_test_split
 

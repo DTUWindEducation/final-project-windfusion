@@ -1,5 +1,8 @@
 import os
 import matplotlib.pyplot as plt
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from finalproject import save_figure
 
 def test_save_figure():

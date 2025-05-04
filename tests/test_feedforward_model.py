@@ -4,8 +4,10 @@ import numpy as np
 from sklearn.datasets import make_regression
 from sklearn.metrics import mean_squared_error
 from sklearn.exceptions import NotFittedError
+import os, sys
 
 # Assuming the FeedforwardNNModel is imported from your module
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from finalproject import FeedforwardNNModel, train_test_split
 
 def test_feedforward_nn_model_initialization():

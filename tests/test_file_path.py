@@ -1,4 +1,5 @@
-import os
+import os, sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 from finalproject import get_input_file_path
 
 def test_get_input_file_path():
