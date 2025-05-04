@@ -133,6 +133,12 @@ final-project-windfusion/
            |
            v
 +-----------------------------+
+|  SiteSummary(site)          |
+|  → Summarizes key statistics|
++-----------------------------+
+           |
+           v
++-----------------------------+
 | get_input_file_path(site)   |
 |  → Load CSV data            |
 +-----------------------------+
@@ -191,8 +197,23 @@ final-project-windfusion/
            v
 +-----------------------------+
 | PersistenceModel(test_df)   |
-|  → Predict and evaluate     |
+|  → Predict and Evaluate     |
 +-----------------------------+
+           |
+           v
++-----------------------------+
+|  plot_feature_importance()  |
+|  → Only if ML model supports|
+|  → Saves bar chart to /outputs
++-----------------------------+
+           |
+           v
++--------------------------------------+
+|  evaluate_model_without_power_lag1() |
+|  → Retrain & compare performance     |
+|    without 'Power_lag1' feature      |
+|    and plots feature importance again|
++--------------------------------------+
            |
            v
 +--------------------------+
@@ -229,11 +250,10 @@ final-project-windfusion/
      - `train()`: Trains the GB model on the provided data
      - `predict(test_df)`: Makes predictions on test data
 
-4. **LagLinearModel** (`src/finalproject/__init__.py`)
-   - Linear regression model using lagged values for time series forecasting
+4. **RandomForestModel** (`src/finalproject/__init__.py`)
+   - Random Forest Regressor, tree-based ensemble model for regression
    - Methods:
-     - `__init__(train_df, target_col='Power', lags=24)`
-     - `_prepare_lagged_data(df)`: Creates lag features for the model
+     - `__init__(train_df, target_col='Power')`
      - `train()`: Trains the linear model on the lagged data
      - `predict(test_df)`: Makes predictions on test data
 
